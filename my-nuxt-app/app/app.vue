@@ -23,26 +23,36 @@
                 Nuxt 3 • Workers • KV Cache
               </span>
             </h1>
-            <p class="text-gray-400 mt-2 ml-1">
-              Built by 
-              <a href="https://www.thinklogic.com/" target="_blank" class="text-blue-400 font-semibold hover:text-blue-300 transition-colors ml-1">
-                Thinklogic
-              </a>
-              <span class="mx-2">•</span>
-              for 
-              <span class="text-blue-400 font-semibold ml-1">CPI (Chatsworth Products)</span>
-            </p>
+            
           </div>
           
           <!-- Cache Status Badge -->
-          <div class="flex items-center gap-3 bg-gradient-to-r from-gray-900 to-black/80 border border-white/10 px-4 py-3 rounded-xl backdrop-blur-md shadow-lg">
+          <div :class="[
+            'flex items-center gap-3 border px-4 py-3 rounded-xl backdrop-blur-md shadow-lg transition-all duration-500',
+            pageData?.fromCache 
+              ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 border-green-500/30' 
+              : 'bg-gradient-to-r from-orange-900/40 to-red-900/40 border-orange-500/30'
+          ]">
             <div class="relative">
-              <div class="w-4 h-4 rounded-full bg-green-400 animate-pulse"></div>
-              <div class="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-20"></div>
+              <div :class="[
+                'w-4 h-4 rounded-full',
+                pageData?.fromCache ? 'bg-green-400 animate-pulse' : 'bg-orange-400 animate-pulse'
+              ]"></div>
+              <div :class="[
+                'absolute inset-0 rounded-full animate-ping opacity-20',
+                pageData?.fromCache ? 'bg-green-400' : 'bg-orange-400'
+              ]"></div>
             </div>
             <div>
-              <span class="text-gray-300 text-sm tracking-wide font-medium">ISR Cache Active</span>
-              <div class="text-xs text-gray-500 mt-0.5">60s TTL</div>
+              <span :class="[
+                'text-sm tracking-wide font-medium',
+                pageData?.fromCache ? 'text-green-300' : 'text-orange-300'
+              ]">
+                {{ pageData?.fromCache ? '⚡ Cache HIT' : '🔄 Cache MISS' }}
+              </span>
+              <div class="text-xs text-gray-400 mt-0.5">
+                {{ pageData?.fromCache ? 'Served from KV' : 'Fresh Generation' }}
+              </div>
             </div>
           </div>
         </div>
@@ -51,6 +61,42 @@
 
     <!-- Main Content -->
     <main class="flex-1 px-4 py-8 md:py-12 container mx-auto max-w-6xl relative z-10">
+      <!-- Cache Status Info Card -->
+      <div :class="[
+        'rounded-xl p-5 border mb-6 transition-all duration-500',
+        pageData?.fromCache 
+          ? 'bg-green-500/10 border-green-500/30' 
+          : 'bg-orange-500/10 border-orange-500/30'
+      ]">
+        <div class="flex items-center gap-3 mb-3">
+          <div :class="[
+            'w-12 h-12 rounded-full flex items-center justify-center border-2',
+            pageData?.fromCache 
+              ? 'bg-green-500/20 border-green-500/40' 
+              : 'bg-orange-500/20 border-orange-500/40'
+          ]">
+            <span class="text-2xl">{{ pageData?.fromCache ? '⚡' : '🔄' }}</span>
+          </div>
+          <div>
+            <h3 :class="[
+              'font-bold text-lg',
+              pageData?.fromCache ? 'text-green-300' : 'text-orange-300'
+            ]">
+              {{ pageData?.fromCache ? 'Cache HIT' : 'Cache MISS' }}
+            </h3>
+            <p class="text-gray-400 text-sm">
+              {{ pageData?.fromCache ? 'This page was served from KV cache (instant delivery!)' : 'This page was freshly generated (will be cached for 5 minutes)' }}
+            </p>
+          </div>
+        </div>
+        <div :class="[
+          'text-xs font-mono px-3 py-2 rounded bg-black/30',
+          pageData?.fromCache ? 'text-green-400' : 'text-orange-400'
+        ]">
+          Status: {{ pageData?.fromCache ? 'CACHED_RESPONSE' : 'NEW_GENERATION' }}
+        </div>
+      </div>
+
       <!-- Cache Visualization -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold text-gray-300 mb-6 text-center">Cache Lifecycle Visualization</h2>
@@ -82,7 +128,7 @@
               <span class="text-blue-400 text-2xl">⏱️</span>
             </div>
             <h3 class="text-center font-medium text-gray-300 mb-2">Regeneration</h3>
-            <p class="text-gray-500 text-sm text-center">Auto-revalidates after 60 seconds</p>
+            <p class="text-gray-500 text-sm text-center">Auto-revalidates after 5 minutes</p>
           </div>
         </div>
       </div>
@@ -171,33 +217,29 @@
               <ul class="space-y-3">
                 <li class="flex items-start gap-2">
                   <span class="text-blue-400 mt-0.5">•</span>
-                  <span>Refresh multiple times within <strong class="text-white">60 seconds</strong></span>
+                  <span>Click <strong class="text-white">"Test Cache"</strong> multiple times</span>
                 </li>
                 <li class="flex items-start gap-2">
                   <span class="text-blue-400 mt-0.5">•</span>
-                  <span>On cache HIT → values stay <strong class="text-white">frozen</strong></span>
+                  <span>Within 5min → Status shows <strong class="text-green-300">Cache HIT</strong></span>
                 </li>
                 <li class="flex items-start gap-2">
                   <span class="text-blue-400 mt-0.5">•</span>
-                  <span>After 60 seconds → page <strong class="text-white">regenerates</strong></span>
+                  <span>After 5min → Auto-regenerates with new timestamp</span>
                 </li>
               </ul>
             </div>
             
             <div class="bg-gray-800/20 border border-white/10 rounded-xl p-5">
-              <h4 class="font-semibold text-gray-300 mb-3">Monitoring</h4>
+              <h4 class="font-semibold text-gray-300 mb-3">Button Actions</h4>
               <ul class="space-y-3">
                 <li class="flex items-start gap-2">
-                  <span class="text-green-400 mt-0.5">✓</span>
-                  <span>Check <code class="bg-black/30 px-2 py-1 rounded text-sm">ISR Cache HIT</code> in logs</span>
+                  <span class="text-gray-400 mt-0.5">🔄</span>
+                  <span><strong class="text-white">Test Cache:</strong> Refresh without purging cache</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <span class="text-yellow-400 mt-0.5">✓</span>
-                  <span>Monitor <code class="bg-black/30 px-2 py-1 rounded text-sm">regeneration times</code></span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="text-purple-400 mt-0.5">✓</span>
-                  <span>Watch <code class="bg-black/30 px-2 py-1 rounded text-sm">Request ID changes</code></span>
+                  <span class="text-orange-400 mt-0.5">🗑️</span>
+                  <span><strong class="text-white">Purge:</strong> Force clear cache & regenerate</span>
                 </li>
               </ul>
             </div>
@@ -205,16 +247,36 @@
         </div>
       </div>
 
-      <!-- Refresh Button -->
-      <div class="mt-8 text-center">
+      <!-- Action Buttons -->
+      <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
         <button
-          @click="refreshData"
-          class="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-blue-500/20 flex items-center gap-2 mx-auto"
+          @click="simpleRefresh"
+          :disabled="isRefreshing"
+          :class="{ 'opacity-50 cursor-not-allowed': isRefreshing }"
+          class="px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white font-medium rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2"
         >
           <span>🔄</span>
-          <span>Refresh Page</span>
+          <span>Test Cache (Refresh)</span>
         </button>
-        <p class="text-gray-500 text-sm mt-2">Manually trigger a refresh to test cache behavior</p>
+        
+        <button
+          @click="purgeAndRefresh"
+          :disabled="isRefreshing"
+          :class="{ 'opacity-50 cursor-not-allowed': isRefreshing }"
+          class="px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-medium rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-red-500/20 flex items-center gap-2 disabled:hover:scale-100"
+        >
+          <span>{{ isRefreshing ? '🔄' : '🗑️' }}</span>
+          <span>{{ isRefreshing ? 'Purging Cache...' : 'Purge & Regenerate' }}</span>
+        </button>
+      </div>
+      
+      <div class="mt-4 text-center space-y-2">
+        <p class="text-gray-400 text-sm">
+          <span class="text-gray-300 font-medium">Gray Button:</span> Refresh without purging (tests if cache is active)
+        </p>
+        <p class="text-gray-400 text-sm">
+          <span class="text-orange-300 font-medium">Red Button:</span> Force purge cache and generate fresh content
+        </p>
       </div>
     </main>
 
@@ -249,31 +311,79 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
 const { data: pageData, refresh } = await useAsyncData('page-data', async () => {
-  const now = new Date().toISOString()
-  return {
-    time: now,
-    generatedAt: now,
-    requestId: Math.random().toString(36).substring(7)
+  if (import.meta.server) {
+    const event = useRequestEvent()
+    
+    // Check if we have cached data from middleware
+    if (event?.context.cacheHit && event?.context.cachedData) {
+      console.log('📦 Using cached data')
+      return {
+        ...event.context.cachedData,
+        fromCache: true
+      }
+    }
+    
+    // Generate fresh data
+    const now = new Date().toISOString()
+    const newData = {
+      time: now,
+      generatedAt: now,
+      requestId: Math.random().toString(36).substring(7),
+      fromCache: false,
+      timestamp: Date.now()
+    }
+    
+    // Store in context so the plugin can cache it
+    event.context.pageData = newData
+    
+    console.log('🆕 Generated fresh data')
+    return newData
   }
+  
+  return null
 }, {
   server: true,
   lazy: false
 })
 
-// Refresh function
-const refreshData = () => {
-  refresh()
-  // Add a subtle animation feedback
-  const btn = document.querySelector('button')
-  if (btn) {
-    btn.classList.add('scale-95')
-    setTimeout(() => btn.classList.remove('scale-95'), 150)
+const isRefreshing = ref(false)
+
+const simpleRefresh = () => {
+  if (isRefreshing.value) return
+  window.location.reload()
+}
+
+const purgeAndRefresh = async () => {
+  if (isRefreshing.value) return
+  
+  isRefreshing.value = true
+  
+  try {
+    console.log('🗑️ Purging cache...')
+    
+    const response = await $fetch('/api/purge', {
+      method: 'POST'
+    })
+    
+    console.log('✅ Purge response:', response)
+    
+    if (!response.success) {
+      console.error('❌ Purge failed:', response)
+      isRefreshing.value = false
+      return
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 200))
+    window.location.reload()
+  } catch (error) {
+    console.error('❌ Purge failed:', error)
+    isRefreshing.value = false
   }
 }
 
-// Format time for display
 const formatTime = (isoString: string) => {
   const date = new Date(isoString)
   return date.toLocaleTimeString('en-US', {
@@ -284,7 +394,6 @@ const formatTime = (isoString: string) => {
   })
 }
 
-// Calculate cache age (for visual indicator)
 const cacheAgeSeconds = computed(() => {
   if (!pageData.value) return 0
   const generated = new Date(pageData.value.generatedAt).getTime()
@@ -294,9 +403,16 @@ const cacheAgeSeconds = computed(() => {
 
 const cacheAgePercentage = computed(() => {
   const age = cacheAgeSeconds.value
-  // Show progress from 0-60 seconds (TTL period)
-  return Math.min(100, (age / 60) * 100)
+  // Show progress from 0-300 seconds (5 minutes TTL period)
+  return Math.min(100, (age / 300) * 100)
 })
+if (import.meta.client) {
+  setInterval(() => {
+    if (pageData.value) {
+      pageData.value = { ...pageData.value }
+    }
+  }, 1000)
+}
 </script>
 
 <style scoped>
