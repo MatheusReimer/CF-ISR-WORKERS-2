@@ -1,0 +1,15 @@
+name = "cf-nuxt-test"
+main = ".output/server/index.mjs"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+kv_namespaces = [
+  { binding = "NUXT_CACHE", id = "2353ef87daff429483828b8d4e4e5c3c", preview_id = "c06abb1ffa384efc86d8de241e5021a5" }
+]
+
+# Remove or comment out [site] section for Workers deployment
+# [site]
+# bucket = ".output/public"
+
+# If using Pages, add this instead:
+# pages_build_output_dir = ".output/public"
