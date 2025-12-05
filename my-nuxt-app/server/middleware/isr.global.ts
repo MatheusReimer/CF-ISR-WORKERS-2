@@ -3,35 +3,49 @@ import { ISR_CONFIG } from '../config/isr'
 export default defineEventHandler(async (event) => {
   const fullUrl = event.path || event.node.req.url || '/'
   const url = fullUrl.split('?')[0]
-
-  // Skip API routes and assets
-  if (url.startsWith('/api/') || (url.includes('.') && !url.endsWith('.html'))) {
+  
+  if (
+    url.startsWith('/api/') || 
+    url.startsWith('/_nuxt/') ||
+    (url.includes('.') && !url.endsWith('.html')) ||
+    event.method !== 'GET'
+  ) {
     return
   }
   
   const env = event.context.cloudflare?.env
-  const kv = env?.NUXT_CACHE
+  const kv = env?.NUXT_CACHE as any | undefined
   
   if (!kv) {
-    event.context.cacheHit = false
+    event.context.isCacheHit = false
     return
   }
 
   const key = `${ISR_CONFIG.CACHE_KEY_PREFIX}${url}`
-
+  
   try {
-    const cached = await kv.get(key, 'json')
+    let cachedHtml = await kv.get(key, 'text')
     
-    if (cached) {
-      console.log(`✅ Cache HIT: ${url}`)
-      event.context.cacheHit = true
-      event.context.cachedData = cached
+    if (cachedHtml) {
+      console.log(`✅ Cache HIT: / - Serving from KV (${cachedHtml.length} bytes)`)
+      
+      cachedHtml = cachedHtml.replace(
+        "window.__NUXT_CACHE_STATUS__ = 'MISS'",
+        "window.__NUXT_CACHE_STATUS__ = 'HIT'"
+      )
+      
+      setResponseHeader(event, 'Content-Type', 'text/html; charset=utf-8')
+      setResponseHeader(event, 'X-Cache-Status', 'HIT')
+      
+      event.context.isCacheHit = true
+      event.node.res.end(cachedHtml)
       return
     }
   } catch (error) {
     console.error('❌ KV read error:', error)
   }
 
-  console.log(`⏳ Cache MISS: ${url}`)
-  event.context.cacheHit = false
+  console.log(`⏳ Cache MISS: / - Will generate and cache`)
+  setResponseHeader(event, 'X-Cache-Status', 'MISS')
+  event.context.isCacheHit = false
 })

@@ -1,4 +1,5 @@
 export const ISR_CONFIG = {
-  TTL: 300, // 5 minutes in seconds (change this value as needed)
-  CACHE_KEY_PREFIX: 'isr:data:'
+  TTL: 300, // 5 minutes
+  CACHE_KEY_PREFIX: 'isr:html:',
+  KV_BINDING: 'NUXT_CACHE' 
 } as const

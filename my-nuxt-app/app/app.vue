@@ -10,129 +10,22 @@
     <!-- Header -->
     <header class="px-6 py-8 border-b border-white/10 backdrop-blur-xl bg-gray-900/60 relative z-10">
       <div class="container mx-auto max-w-6xl">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 class="text-3xl md:text-4xl font-bold tracking-tight flex items-center gap-3">
-              <div class="relative">
-                <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg blur opacity-30"></div>
-                <span class="relative bg-gray-900 px-4 py-2 rounded-lg flex items-center gap-2">
-                  ⚡ Cloudflare ISR Demo
-                </span>
-              </div>
-              <span class="text-xs px-3 py-1.5 rounded-full border border-white/20 bg-gradient-to-r from-blue-900/20 to-cyan-900/20 uppercase tracking-wider font-mono">
-                Nuxt 3 • Workers • KV Cache
-              </span>
-            </h1>
-            
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight flex items-center gap-3">
+          <div class="relative">
+            <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg blur opacity-30"></div>
+            <span class="relative bg-gray-900 px-4 py-2 rounded-lg flex items-center gap-2">
+              ⚡ Cloudflare ISR Demo
+            </span>
           </div>
-          
-          <!-- Cache Status Badge -->
-          <div :class="[
-            'flex items-center gap-3 border px-4 py-3 rounded-xl backdrop-blur-md shadow-lg transition-all duration-500',
-            pageData?.fromCache 
-              ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 border-green-500/30' 
-              : 'bg-gradient-to-r from-orange-900/40 to-red-900/40 border-orange-500/30'
-          ]">
-            <div class="relative">
-              <div :class="[
-                'w-4 h-4 rounded-full',
-                pageData?.fromCache ? 'bg-green-400 animate-pulse' : 'bg-orange-400 animate-pulse'
-              ]"></div>
-              <div :class="[
-                'absolute inset-0 rounded-full animate-ping opacity-20',
-                pageData?.fromCache ? 'bg-green-400' : 'bg-orange-400'
-              ]"></div>
-            </div>
-            <div>
-              <span :class="[
-                'text-sm tracking-wide font-medium',
-                pageData?.fromCache ? 'text-green-300' : 'text-orange-300'
-              ]">
-                {{ pageData?.fromCache ? '⚡ Cache HIT' : '🔄 Cache MISS' }}
-              </span>
-              <div class="text-xs text-gray-400 mt-0.5">
-                {{ pageData?.fromCache ? 'Served from KV' : 'Fresh Generation' }}
-              </div>
-            </div>
-          </div>
-        </div>
+          <span class="text-xs px-3 py-1.5 rounded-full border border-white/20 bg-gradient-to-r from-blue-900/20 to-cyan-900/20 uppercase tracking-wider font-mono">
+            Nuxt 3 • Workers • KV Cache
+          </span>
+        </h1>
       </div>
     </header>
 
     <!-- Main Content -->
     <main class="flex-1 px-4 py-8 md:py-12 container mx-auto max-w-6xl relative z-10">
-      <!-- Cache Status Info Card -->
-      <div :class="[
-        'rounded-xl p-5 border mb-6 transition-all duration-500',
-        pageData?.fromCache 
-          ? 'bg-green-500/10 border-green-500/30' 
-          : 'bg-orange-500/10 border-orange-500/30'
-      ]">
-        <div class="flex items-center gap-3 mb-3">
-          <div :class="[
-            'w-12 h-12 rounded-full flex items-center justify-center border-2',
-            pageData?.fromCache 
-              ? 'bg-green-500/20 border-green-500/40' 
-              : 'bg-orange-500/20 border-orange-500/40'
-          ]">
-            <span class="text-2xl">{{ pageData?.fromCache ? '⚡' : '🔄' }}</span>
-          </div>
-          <div>
-            <h3 :class="[
-              'font-bold text-lg',
-              pageData?.fromCache ? 'text-green-300' : 'text-orange-300'
-            ]">
-              {{ pageData?.fromCache ? 'Cache HIT' : 'Cache MISS' }}
-            </h3>
-            <p class="text-gray-400 text-sm">
-              {{ pageData?.fromCache ? 'This page was served from KV cache (instant delivery!)' : 'This page was freshly generated (will be cached for 5 minutes)' }}
-            </p>
-          </div>
-        </div>
-        <div :class="[
-          'text-xs font-mono px-3 py-2 rounded bg-black/30',
-          pageData?.fromCache ? 'text-green-400' : 'text-orange-400'
-        ]">
-          Status: {{ pageData?.fromCache ? 'CACHED_RESPONSE' : 'NEW_GENERATION' }}
-        </div>
-      </div>
-
-      <!-- Cache Visualization -->
-      <div class="mb-12">
-        <h2 class="text-xl font-semibold text-gray-300 mb-6 text-center">Cache Lifecycle Visualization</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Cache Miss -->
-          <div class="bg-gradient-to-br from-gray-900/50 to-black/50 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-500/20 border border-red-500/30 mb-4 mx-auto">
-              <span class="text-red-400 text-2xl">🔄</span>
-            </div>
-            <h3 class="text-center font-medium text-gray-300 mb-2">Cache Miss</h3>
-            <p class="text-gray-500 text-sm text-center">First request generates fresh content</p>
-          </div>
-          
-          <!-- Cache Hit -->
-          <div class="bg-gradient-to-br from-gray-900/50 to-black/50 border border-white/10 rounded-2xl p-6 backdrop-blur-sm relative">
-            <div class="absolute -top-2 -right-2">
-              <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">ACTIVE</span>
-            </div>
-            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-500/20 border border-green-500/30 mb-4 mx-auto">
-              <span class="text-green-400 text-2xl">⚡</span>
-            </div>
-            <h3 class="text-center font-medium text-gray-300 mb-2">Cache Hit</h3>
-            <p class="text-gray-500 text-sm text-center">Served instantly from KV cache</p>
-          </div>
-          
-          <!-- Regeneration -->
-          <div class="bg-gradient-to-br from-gray-900/50 to-black/50 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 border border-blue-500/30 mb-4 mx-auto">
-              <span class="text-blue-400 text-2xl">⏱️</span>
-            </div>
-            <h3 class="text-center font-medium text-gray-300 mb-2">Regeneration</h3>
-            <p class="text-gray-500 text-sm text-center">Auto-revalidates after 5 minutes</p>
-          </div>
-        </div>
-      </div>
-
       <!-- Data Card -->
       <div class="rounded-2xl bg-gradient-to-br from-gray-900/70 to-black/70 border border-white/10 p-6 md:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
         <!-- Shimmer Effect -->
@@ -166,7 +59,7 @@
                 <span class="text-green-400">🔄</span>
               </div>
               <div>
-                <h3 class="font-medium text-gray-300">Regenerated At</h3>
+                <h3 class="font-medium text-gray-300">Generated At</h3>
                 <p class="text-2xl font-mono font-bold text-white mt-1">{{ formatTime(pageData.generatedAt) }}</p>
               </div>
             </div>
@@ -211,38 +104,26 @@
             <span class="text-blue-400">ℹ️</span>
             ISR Instructions
           </h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-blue-500/5 border border-blue-400/20 rounded-xl p-5">
-              <h4 class="font-semibold text-blue-300 mb-3">Testing Instructions</h4>
-              <ul class="space-y-3">
-                <li class="flex items-start gap-2">
-                  <span class="text-blue-400 mt-0.5">•</span>
-                  <span>Click <strong class="text-white">"Test Cache"</strong> multiple times</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="text-blue-400 mt-0.5">•</span>
-                  <span>Within 5min → Status shows <strong class="text-green-300">Cache HIT</strong></span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="text-blue-400 mt-0.5">•</span>
-                  <span>After 5min → Auto-regenerates with new timestamp</span>
-                </li>
-              </ul>
-            </div>
-            
-            <div class="bg-gray-800/20 border border-white/10 rounded-xl p-5">
-              <h4 class="font-semibold text-gray-300 mb-3">Button Actions</h4>
-              <ul class="space-y-3">
-                <li class="flex items-start gap-2">
-                  <span class="text-gray-400 mt-0.5">🔄</span>
-                  <span><strong class="text-white">Test Cache:</strong> Refresh without purging cache</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="text-orange-400 mt-0.5">🗑️</span>
-                  <span><strong class="text-white">Purge:</strong> Force clear cache & regenerate</span>
-                </li>
-              </ul>
-            </div>
+          <div class="bg-blue-500/5 border border-blue-400/20 rounded-xl p-5">
+            <h4 class="font-semibold text-blue-300 mb-3">How It Works</h4>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-2">
+                <span class="text-blue-400 mt-0.5">•</span>
+                <span>First visit generates fresh HTML and caches it in Cloudflare KV</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-blue-400 mt-0.5">•</span>
+                <span>Subsequent visits serve the cached HTML instantly (check timestamp - it stays the same!)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-blue-400 mt-0.5">•</span>
+                <span>After 5 minutes, cache expires and page regenerates automatically</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-blue-400 mt-0.5">•</span>
+                <span>Click "Purge" to force immediate regeneration</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -256,7 +137,7 @@
           class="px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white font-medium rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2"
         >
           <span>🔄</span>
-          <span>Test Cache (Refresh)</span>
+          <span>Refresh Page</span>
         </button>
         
         <button
@@ -266,16 +147,13 @@
           class="px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-medium rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-red-500/20 flex items-center gap-2 disabled:hover:scale-100"
         >
           <span>{{ isRefreshing ? '🔄' : '🗑️' }}</span>
-          <span>{{ isRefreshing ? 'Purging Cache...' : 'Purge & Regenerate' }}</span>
+          <span>{{ isRefreshing ? 'Purging Cache...' : 'Purge Cache' }}</span>
         </button>
       </div>
       
-      <div class="mt-4 text-center space-y-2">
+      <div class="mt-4 text-center">
         <p class="text-gray-400 text-sm">
-          <span class="text-gray-300 font-medium">Gray Button:</span> Refresh without purging (tests if cache is active)
-        </p>
-        <p class="text-gray-400 text-sm">
-          <span class="text-orange-300 font-medium">Red Button:</span> Force purge cache and generate fresh content
+          Watch the timestamp - it stays the same when served from cache! Check DevTools Network tab for response time (5-20ms = cached, 200ms+ = fresh render)
         </p>
       </div>
     </main>
@@ -311,33 +189,22 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
-const { data: pageData, refresh } = await useAsyncData('page-data', async () => {
+const { data: pageData } = await useAsyncData('page-data', async () => {
   if (import.meta.server) {
     const event = useRequestEvent()
     
-    // Check if we have cached data from middleware
-    if (event?.context.cacheHit && event?.context.cachedData) {
-      console.log('📦 Using cached data')
-      return {
-        ...event.context.cachedData,
-        fromCache: true
-      }
-    }
-    
-    // Generate fresh data
     const now = new Date().toISOString()
     const newData = {
       time: now,
       generatedAt: now,
       requestId: Math.random().toString(36).substring(7),
-      fromCache: false,
       timestamp: Date.now()
     }
     
-    // Store in context so the plugin can cache it
-    event.context.pageData = newData
+    if (event) {
+      event.context.pageData = newData
+    }
     
     console.log('🆕 Generated fresh data')
     return newData
@@ -358,28 +225,43 @@ const simpleRefresh = () => {
 
 const purgeAndRefresh = async () => {
   if (isRefreshing.value) return
-  
   isRefreshing.value = true
   
   try {
-    console.log('🗑️ Purging cache...')
+    console.log('🗑️ Starting purge process...')
     
-    const response = await $fetch('/api/purge', {
-      method: 'POST'
+    const response = await $fetch('/api/purge', { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ url: '/' })
     })
     
-    console.log('✅ Purge response:', response)
+    console.log('✅ Purge API response:', response)
     
     if (!response.success) {
-      console.error('❌ Purge failed:', response)
+      console.error('❌ Purge reported failure:', response)
+      alert('Purge failed: ' + (response.error || response.message))
       isRefreshing.value = false
       return
     }
     
-    await new Promise(resolve => setTimeout(resolve, 200))
+    if (response.hadCache) {
+      console.log('✅ Cache was found and deleted')
+    } else {
+      console.log('⚠️ No cache found to delete')
+    }
+    
+    // Wait for KV propagation
+    console.log('⏳ Waiting for cache deletion to propagate...')
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    console.log('🔄 Reloading page...')
     window.location.reload()
-  } catch (error) {
-    console.error('❌ Purge failed:', error)
+  } catch (error: any) {
+    console.error('❌ Purge request failed:', error)
+    alert('Purge error: ' + error.message)
     isRefreshing.value = false
   }
 }
@@ -403,9 +285,9 @@ const cacheAgeSeconds = computed(() => {
 
 const cacheAgePercentage = computed(() => {
   const age = cacheAgeSeconds.value
-  // Show progress from 0-300 seconds (5 minutes TTL period)
   return Math.min(100, (age / 300) * 100)
 })
+
 if (import.meta.client) {
   setInterval(() => {
     if (pageData.value) {
@@ -414,6 +296,7 @@ if (import.meta.client) {
   }, 1000)
 }
 </script>
+
 
 <style scoped>
 @keyframes float {
